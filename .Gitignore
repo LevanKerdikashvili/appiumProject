@@ -1,0 +1,22 @@
+# Maven target directory
+target/
+
+# IDE files
+*.iml
+.idea/
+.eclipse/
+.classpath
+.project
+
+# Maven generated files
+dependency-reduced-pom.xml
+buildNumber.properties
+*.log
+
+# Appium logs and screenshots
+logs/
+test-output/
+reports/
+report/
+videos/
+*.png
