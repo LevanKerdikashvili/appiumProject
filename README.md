@@ -46,6 +46,7 @@ The plugin will not be active unless turned on when invoking the Appium server. 
 <img src="https://github.com/AppiumTestDistribution/appium-device-farm/blob/main/docs/assets/images/demo.gif?raw=true" width="500" />
 <br/> you can block/unblock devices from Dashboard manually. These devices will not be picked up for automation.
 Once automation picks the device user cannot manually unblock, it's responsible for the automation script.
+dashboard will be: <a href="http://localhost:4723/device-farm/" target="_blank">localhost:4723/device-farm</a> 
 for more information check <a href="https://appium-device-farm-eight.vercel.app/" target="_blank">Appium Device Farm Doc.</a>
 
 ----------------------------------------------------------
