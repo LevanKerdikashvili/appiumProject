@@ -27,7 +27,6 @@ public class Utils {
     static Date date = new Date();
 
 
-
     /**
      * The log function logs a message to the ExtentReport, console, and a log file with the current date and time.
      *
@@ -155,8 +154,16 @@ public class Utils {
      * @return The method is returning the text value of the WebElement.
      */
     public static String getText(WebElement e, String msg) {
-        String txt = null;
-        txt = getAttribute(e, "text");
+       String txt = null;
+        switch(BaseTest.getPlatform()) {
+            case "android":
+                txt = getAttribute(e, "text");
+                break;
+            case "ios":
+                txt = getAttribute(e, "label");
+                break;
+        }
+
         log(Status.INFO, msg + txt);
         return txt;
     }

@@ -1,10 +1,14 @@
 package uz.tbcBank.pages.teamName.simpleModule;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.pagefactory.AndroidFindBy;
+import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import uz.tbcBank.Helpers.Utils;
+import uz.tbcBank.test.BaseTest;
 
 public class LoginPage {
 
@@ -12,21 +16,24 @@ public class LoginPage {
 
     public LoginPage(AppiumDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(driver, this);
-
+        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
-    @FindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Username\"]")
+    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Username\"]")
+    @iOSXCUITFindBy(id = "test-Username")
     private WebElement usernameTxtFld;
 
-    @FindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Password\"]")
+    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Password\"]")
+    @iOSXCUITFindBy(id = "test-Password")
     private WebElement passwordTxtFld;
 
-    @FindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-LOGIN\"]")
+    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-LOGIN\"]")
+    @iOSXCUITFindBy(id = "test-LOGIN")
     private WebElement loginBtn;
-   @FindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-Error message\"]/android.widget.TextView")
+    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-Error message\"]/android.widget.TextView")
+    @iOSXCUITFindBy(id = "test-Error message")
     private WebElement errTxt;
-   @FindBy(xpath = "//android.widget.TextView[@text='PRODUCTS']")
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text='PRODUCTS']")
     private WebElement productTitleTxt;
 
 
@@ -47,6 +54,7 @@ public class LoginPage {
     public String getErrTxt() {
         return Utils.getText(errTxt, "error text is - ");
     }
+
     public String getTitle() {
         return Utils.getText(productTitleTxt, "product page title is - ");
     }
