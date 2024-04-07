@@ -5,19 +5,36 @@
 package uz.tbcBank.Helpers;
 
 import com.aventstack.extentreports.Status;
+import com.google.common.collect.ImmutableMap;
+import io.appium.java_client.AppiumBy;
+import io.appium.java_client.InteractsWithApps;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import uz.tbcBank.test.BaseTest;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static uz.tbcBank.test.BaseTest.conf;
+import static uz.tbcBank.test.BaseTest.getDriver;
 
 public class Utils {
 
@@ -154,8 +171,8 @@ public class Utils {
      * @return The method is returning the text value of the WebElement.
      */
     public static String getText(WebElement e, String msg) {
-       String txt = null;
-        switch(BaseTest.getPlatform()) {
+        String txt = null;
+        switch (BaseTest.getPlatform()) {
             case "android":
                 txt = getAttribute(e, "text");
                 break;
@@ -166,6 +183,144 @@ public class Utils {
 
         log(Status.INFO, msg + txt);
         return txt;
+    }
+
+
+    /**
+     * The `launchApp` function activates the specified mobile app based on the platform (Android or iOS) retrieved from
+     * `BaseTest`.
+     */
+    public void launchApp() {
+        log(Status.INFO, "launch App");
+        switch (BaseTest.getPlatform()) {
+            case "android":
+                ((InteractsWithApps) getDriver()).activateApp(conf.read("appPackage"));
+                break;
+            case "ios":
+                ((InteractsWithApps) getDriver()).activateApp(conf.read("iOSBundleId"));
+        }
+    }
+
+    /**
+     * The `closeApp` function terminates the currently running mobile application based on the platform (Android or iOS)
+     * specified in the test configuration.
+     */
+    public void closeApp() {
+        log(Status.INFO, "close app");
+        switch (BaseTest.getPlatform()) {
+            case "android":
+                ((InteractsWithApps) getDriver()).terminateApp(conf.read("appPackage"));
+                break;
+            case "ios":
+                ((InteractsWithApps) getDriver()).terminateApp(conf.read("iOSBundleId"));
+        }
+    }
+
+
+    /**
+     * The function `scrollToEndAndroid` scrolls to the end of a page on an Android device using a scroll gesture until it
+     * can no longer scroll further.
+     */
+    public static void scrollToEndAndroid() {
+        log(Status.INFO, "Android scrollToEnd");
+        boolean canScrollMore;
+        do {
+            canScrollMore = (Boolean) getDriver().executeScript("mobile: scrollGesture", ImmutableMap.of(
+                    "left", 100, "top", 100, "width", 200, "height", 200,
+                    "direction", "down",
+                    "percent", 3.0,
+                    "speed", 1000
+
+            ));
+        } while (canScrollMore);
+    }
+
+    /**
+     * The function `scrollToTextAndroid` scrolls to a specific text element on an Android app using Appium.
+     *
+     * @param text The `text` parameter in the `scrollToTextAndroid` method represents the text that you want to scroll to
+     *             within the Android application. This text is used to locate the element within the UI and scroll it into view so
+     *             that it becomes visible on the screen.
+     */
+    public static void scrollToTextAndroid(String text) {
+        log(Status.INFO, "android scrollToText - text is: " + text);
+        getDriver().findElement(AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\"" + text + "\"));"));
+    }
+
+
+    /**
+     * The `swipeActionAndroid` function uses JavaScript to perform a swipe gesture on a specified WebElement in a given
+     * direction with a 75% swipe distance.
+     *
+     * @param ele       The `ele` parameter in the `swipeActionAndroid` method is the element on which you want to perform the
+     *                  swipe action. It is of type `WebElement` and represents the element on the Android app screen that you want to
+     *                  swipe.
+     * @param direction The `direction` parameter in the `swipeActionAndroid` method specifies the direction in which the
+     *                  swipe gesture should be performed. It could be values like "up", "down", "left", or "right" based on the desired
+     *                  swipe direction on the Android device.
+     */
+    public static void swipeActionAndroid(WebElement ele, String direction) {
+        log(Status.INFO, "android swipe - direction is: '" + direction + "' and element is " + ele);
+        ((JavascriptExecutor) getDriver()).executeScript("mobile: swipeGesture", ImmutableMap.of(
+                "elementId", ((RemoteWebElement) ele).getId(),
+                "direction", direction,
+                "percent", 0.75
+        ));
+    }
+
+    /**
+     * The function `swipeActionIos` takes a direction as input and performs a swipe action on an iOS device using Appium.
+     *
+     * @param direction The `direction` parameter in the `swipeActionIos` method specifies the direction in which the swipe
+     *                  action should be performed. It could be values like "up", "down", "left", or "right" indicating the direction of the
+     *                  swipe gesture on an iOS device.
+     */
+    public static void swipeActionIos(String direction) {
+        log(Status.INFO, "ios swipe - direction is: " + direction);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("direction", direction);
+        getDriver().executeScript("mobile:swipe", params);
+    }
+
+
+    /**
+     * The function `parseStringXML` reads an XML file containing string elements, extracts the key-value pairs, and stores
+     * them in a HashMap.
+     *
+     * @param file The `file` parameter in the `parseStringXML` method is an `InputStream` that represents an XML file
+     *             containing string elements with attributes "name" and text content. This method parses the XML file and extracts the
+     *             string elements along with their corresponding attribute values and text content, storing them in a
+     * @return The method `parseStringXML` returns a `HashMap<String, String>` containing key-value pairs parsed from an
+     * XML file input stream. The keys are extracted from the "name" attribute of the "string" elements in the XML, and the
+     * corresponding values are the text content of those elements.
+     */
+    public static HashMap<String, String> parseStringXML(InputStream file) throws Exception {
+        HashMap<String, String> stringMap = new HashMap<String, String>();
+        //Get Document Builder
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        //Build Document
+        Document document = builder.parse(file);
+
+        //Normalize the XML Structure; It's just too important !!
+        document.getDocumentElement().normalize();
+
+        //Here comes the root node
+        Element root = document.getDocumentElement();
+
+        //Get all elements
+        NodeList nList = document.getElementsByTagName("string");
+
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node node = nList.item(temp);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) node;
+                // Store each element key value in map
+                stringMap.put(eElement.getAttribute("name"), eElement.getTextContent());
+            }
+        }
+        return stringMap;
     }
 
 

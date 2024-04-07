@@ -18,29 +18,5 @@ public class LoginTest extends BaseTest {
         String actualErrTxt = loginPage.getErrTxt();
         Assert.assertEquals(actualErrTxt, "Username and password do not match any user in this service.");
     }
-
-//    @Test
-//    public void invalidUserNameSecond() {
-//        loginPage.enterUserName("invalidusername");
-//        loginPage.enterPassword("secret_sauce");
-//        loginPage.pressLoginBtn();
-//        String actualErrTxt = loginPage.getErrTxt();
-//        Assert.assertEquals(actualErrTxt, "Username and password do not match any user in this service.");
-//    }
-
-//    @Test
-//    public void invalidUserNameOther() {
-//        loginPage.enterUserName("invalidusername");
-//        loginPage.enterPassword("secret_sauce");
-//        loginPage.pressLoginBtn();
-//        Assert.assertEquals(loginPage.getErrTxt(), "Username and password do not match any user in this service.");
-//    }
-//
-//    @Test
-//    public void successfulLogin() {
-//        loginPage.enterUserName("standard_user");
-//        loginPage.enterPassword("secret_sauce");
-//        loginPage.pressLoginBtn();
-//        Assert.assertEquals(loginPage.getTitle(), "PRODUCTS");
-//    }
+    
 }
