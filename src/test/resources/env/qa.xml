@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- any config or string for qa env -->
+    <string name="simple_string_is_here">simple string is here</string>
+</resources>

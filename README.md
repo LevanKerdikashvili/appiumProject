@@ -1,4 +1,4 @@
-# appium - test automation (Front - Android)
+# appium - test automation (Front - Android/iOS)
 
 -----------------------------------------------------------
 ## Technology: <br>
@@ -79,7 +79,9 @@ Remember to replace `YourUsername` with your actual username in the paths specif
 
 ### Check Device Connection:
 - Open a terminal or command prompt.
-    - Run `adb devices`. Your device should be listed.
+    - Run `adb devices`. Your device should be listed. (for Android)
+    - Run `xcrun xctrace list devices`. Your device should be listed. (for iOS)
+  
 
 
 ### Additional variables
@@ -166,7 +168,7 @@ Find your Android emulator UDID by using terminal and enter this command:
 
 `adb devices` // but if you use device-farm you don't need device UDID
 
-Copy this JSON capabilities into your Appium Inspector
+Copy this JSON capabilities into your Appium Inspector (for ANDROID)
 
 {
 "platformName": "Android",<br>
@@ -174,9 +176,21 @@ Copy this JSON capabilities into your Appium Inspector
 "appium:appPackage": "com.google.android.youtube",<br>
 "appium:appActivity": "com.google.android.youtube.app.honeycomb.Shell$HomeActivity",<br>
 "appium:deviceName": "yourdevicename",<br>
-"appium:automationName": "UiAutomator2",<br>
-"appium:platformVersion": "13",<br>
+"appium:automationName": "UiAutomator2",<br> 
 "appium:autoGrantPermissions": true<br>
+}
+
+
+Copy this JSON capabilities into your Appium Inspector (for IOS)
+
+{
+"appium:platformName": "ios",<br>
+"appium:automationName": "XCUITest",<br>
+"appium:udid": "ios device udid",<br>
+"appium:forceEspressoRebuild": true,<br>
+"appium:printPageSourceOnFindFailure": true,<br>
+"appium:printPageSourceOnFindFailure": true<br>
+"appium:bundleId": "ios app bundle id"<br>
 }
 
 <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*sYAx27RpKj5ciL4w.png">
@@ -198,7 +212,7 @@ By using capability of “appium:app”, with this your apk is not pre-installed
 1. Prepare Emulator or real device
 2. Run Appium server
 3. check config.properties before execute
-4. Run the testng.xml file or use mvn command `mvn clean test`.
+4. Run the testng/*.xml file(s) or use mvn command `mvn clean test -Dplatform=android or ios -Denv=dev or qa`.
 5. After Complete the test execution Report will generate to "report" Folder if it will be enabled from config
 
 
@@ -212,25 +226,25 @@ By using capability of “appium:app”, with this your apk is not pre-installed
             - `Auth`: class of auth
         - `DateBase`: classes of db connection
         - `Helpers`: classes of Helpers
-            - `AllureEnvironmentWritter`: The AllureEnvironmentWriter class contains methods for creating and saving an XML file containing environment variables
+            - `ExtendReport`: The ExtentReport class is a helper class that provides methods for creating and managing ExtentReports objects for generating test reports
             - `Config`: The Config class loads a configuration file and provides a way to read its properties, with a singleton pattern
               implementation
-            - `LanguageReader`: The LanguageReader class reads language strings from a JSON file and provides a method to retrieve a specific string based on a given language code and string name
             - `Listener`: It implements the ITestListener interface and overrides all of its methods
-            - `ResourceReader`: The ResourceReader class reads a JSON file and returns its contents as a JSONObject
             - `Utils`: The Utils class contains various utility methods
-            - `Page`: Java class that contains locators and methods (Page Object)
     - `test/`: Contains the test source code files.
         - `java/`: Contains the Java source files.
           - `uz.tbcBank`: main package 
             - `Helpers`: classes of Helpers
             - `Page/{teamName}/{moduleName}`: Java class that contains locators and methods (Page Object)
             - `test/{teamName}/{moduleName}`: Java class that contains test cases as methods and BaseTest.java
-        - `resources/app/app.apk`: .apk file for testing 
+      - `resources/app/{env}/app.apk`: .apk file for testing
+      - `resources/{env}.xml`: xml files which contains constants/strings depending on the environment
 
 - `pom.xml`: Maven configuration file for your project.
 - `target/`: Contains compiled classes and packaged artifacts (created after building the project).
 - `README.md`: This README file providing an overview of the project.
-- `config.properties`: config data.
+- `config.properties`: common config data.
 - `report`: contains reporting files index.html (you can open it in any browser) + screenshots
-- `videos`: contains video files when test case is fail
+- `app.log`: contains logs
+- `testng/*.xml`: testng files
+

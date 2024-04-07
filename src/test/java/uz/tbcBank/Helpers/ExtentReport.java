@@ -24,8 +24,8 @@ public class ExtentReport {
     public synchronized static ExtentReports getReporter() {
         if (extent == null) {
             ExtentSparkReporter html = new ExtentSparkReporter(filePath);
-            html.config().setDocumentTitle("TBCBank.uz - Mobile Testing Report");
-            html.config().setReportName("Mobile App Testing - " + BaseTest.getPlatform());
+            html.config().setDocumentTitle(BaseTest.getEnv() + " Mobile Testing Report");
+            html.config().setReportName("Mobile App Testing - " + BaseTest.getPlatform() + " - " + BaseTest.getEnv());
             html.config().setTheme(Theme.DARK);
             extent = new ExtentReports();
             extent.attachReporter(html);
