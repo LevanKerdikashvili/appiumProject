@@ -1,6 +1,6 @@
 /**
- * The BaseTest class is a Java class that sets up the desired capabilities for an Android driver, initializes the driver,
- * and handles video recording before and after each test method.
+ * The BaseTest class in Java sets up and initializes the driver with desired capabilities for Android and iOS platforms,
+ * and includes methods for setting and getting driver, platform, and environment values.
  */
 package uz.tbcBank.test;
 
