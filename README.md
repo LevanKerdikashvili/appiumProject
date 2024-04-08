@@ -221,11 +221,7 @@ By using capability of “appium:app”, with this your apk is not pre-installed
 ## Folder Structure
 
 - `src/`: Contains the source code of the project.
-    - `main/`: Contains the main source code files.
-        - `commonSteps`: common methods that can be used in different projects
-            - `Auth`: class of auth
-        - `DateBase`: classes of db connection
-        - `Helpers`: classes of Helpers
+    - `Helpers`: classes of Helpers
             - `ExtendReport`: The ExtentReport class is a helper class that provides methods for creating and managing ExtentReports objects for generating test reports
             - `Config`: The Config class loads a configuration file and provides a way to read its properties, with a singleton pattern
               implementation
