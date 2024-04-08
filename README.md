@@ -221,20 +221,20 @@ By using capability of “appium:app”, with this your apk is not pre-installed
 ## Folder Structure
 
 - `src/`: Contains the source code of the project.
-    - `Helpers`: classes of Helpers
-            - `ExtendReport`: The ExtentReport class is a helper class that provides methods for creating and managing ExtentReports objects for generating test reports
-            - `Config`: The Config class loads a configuration file and provides a way to read its properties, with a singleton pattern
-              implementation
-            - `Listener`: It implements the ITestListener interface and overrides all of its methods
-            - `Utils`: The Utils class contains various utility methods
-    - `test/`: Contains the test source code files.
-        - `java/`: Contains the Java source files.
-          - `uz.tbcBank`: main package 
-            - `Helpers`: classes of Helpers
-            - `Page/{teamName}/{moduleName}`: Java class that contains locators and methods (Page Object)
-            - `test/{teamName}/{moduleName}`: Java class that contains test cases as methods and BaseTest.java
-      - `resources/app/{env}/app.apk`: .apk file for testing
-      - `resources/{env}.xml`: xml files which contains constants/strings depending on the environment
+    - `java/`: Contains the Java source files.
+         - `uz.tbcBank`: main package
+           - `Helpers`: classes of Helpers
+                - `ExtendReport`: The ExtentReport class is a helper class that provides methods for creating and managing ExtentReports objects for generating test reports
+                - `Config`: The Config class loads a configuration file and provides a way to read its properties, with a singleton pattern
+                  implementation
+                - `Listener`: It implements the ITestListener interface and overrides all of its methods
+                - `Utils`: The Utils class contains various utility methods
+           - `Page/{teamName}/{moduleName}`: Java class that contains locators and methods (Page Object)
+           - `test/`: Contains the test source code files.
+             - `test/{teamName}/{moduleName}`: Java class that contains test cases as methods and BaseTest.java
+             - `BaseTest` : The BaseTest class in Java sets up and initializes the driver with desired capabilities for Android and iOS platforms
+           - `resources/app/{env}/app.apk`: .apk file for testing
+           - `resources/{env}.xml`: xml files which contains constants/strings depending on the environment
 
 - `pom.xml`: Maven configuration file for your project.
 - `target/`: Contains compiled classes and packaged artifacts (created after building the project).
