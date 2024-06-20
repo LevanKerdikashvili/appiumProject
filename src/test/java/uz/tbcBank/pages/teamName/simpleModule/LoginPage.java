@@ -19,7 +19,7 @@ public class LoginPage {
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
-    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Username\"]")
+    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Username1\"]")
     @iOSXCUITFindBy(id = "test-Username")
     private WebElement usernameTxtFld;
 
