@@ -16,7 +16,7 @@ public class LoginTest extends BaseTest {
         loginPage.enterPassword("secret_sauce");
         loginPage.pressLoginBtn();
         String actualErrTxt = loginPage.getErrTxt();
-        Assert.assertEquals(actualErrTxt, "Username and password do not match any user in this service.");
+        Assert.assertEquals(actualErrTxt, "1Username and password do not match any user in this service.");
     }
     
 }

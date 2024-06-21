@@ -133,6 +133,7 @@ public class BaseTest {
     public void tearDown() {
         if (driver != null) {
             log(Status.INFO, "driver quit");
+            log(Status.INFO, "--- --- --- ---");
             getDriver().quit();
         }
     }
