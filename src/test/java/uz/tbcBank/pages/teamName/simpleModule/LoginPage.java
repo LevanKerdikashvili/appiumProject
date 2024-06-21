@@ -33,7 +33,7 @@ public class LoginPage {
     @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-Error message\"]/android.widget.TextView")
     @iOSXCUITFindBy(id = "test-Error message")
     private WebElement errTxt;
-    @AndroidFindBy(xpath = "//android.widget.TextView[@text='PRODUCTS']")
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text='PRODUCTS1']")
     private WebElement productTitleTxt;
 
 
