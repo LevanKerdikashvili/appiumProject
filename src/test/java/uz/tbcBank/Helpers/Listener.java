@@ -19,19 +19,15 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-
         File file = BaseTest.getDriver().getScreenshotAs(OutputType.FILE);
-
-        String imagePath = "report/screenshots" + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".png";
-
+        String base64Image = "";
         try {
-            FileUtils.copyFile(file, new File(imagePath));
+            base64Image = Utils.encodeFileToBase64Binary(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String imageUrl = "screenshots" + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".png";
-        ExtentReport.getTest().fail(MediaEntityBuilder.createScreenCaptureFromPath(imageUrl).build());
-
+        String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "' />";
+        ExtentReport.getTest().fail(base64ImageTag);
         ExtentReport.getTest().fail(result.getThrowable());
     }
 

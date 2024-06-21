@@ -21,12 +21,11 @@ import uz.tbcBank.test.BaseTest;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +68,14 @@ public class Utils {
         }
     }
 
+
+
+    public static String encodeFileToBase64Binary(File file) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = new byte[(int) file.length()];
+        fileInputStream.read(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
 
     /**
      * The function waits for a web element to become visible on the page.
