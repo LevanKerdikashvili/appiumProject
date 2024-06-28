@@ -1,6 +1,5 @@
 package uz.tbcBank.test.teamName.simpleModule;
 
-import io.appium.java_client.AppiumDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import uz.tbcBank.pages.teamName.simpleModule.LoginPage;
@@ -18,5 +17,15 @@ public class LoginTest extends BaseTest {
         String actualErrTxt = loginPage.getErrTxt();
         Assert.assertEquals(actualErrTxt, "1Username and password do not match any user in this service.");
     }
-    
+
+    @Test
+    public void successLogin() throws InterruptedException {
+        LoginPage loginPage = new LoginPage(getDriver());
+        loginPage.enterUserName("standard_user");
+        loginPage.enterPassword("secret_sauce");
+        loginPage.pressLoginBtn();
+        Thread.sleep(5000);
+    }
+
+
 }

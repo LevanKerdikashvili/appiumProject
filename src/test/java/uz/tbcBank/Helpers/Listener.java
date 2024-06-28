@@ -1,8 +1,6 @@
 package uz.tbcBank.Helpers;
 
-import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -11,6 +9,7 @@ import uz.tbcBank.test.BaseTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class Listener implements ITestListener {
@@ -26,9 +25,18 @@ public class Listener implements ITestListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "' />";
-        ExtentReport.getTest().fail(base64ImageTag);
+        String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "'  style='width:320px'/>";
+        String videoUrl = "/Videos/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
+        if (Objects.equals(conf.read("recordVideo"), "true")) {
+            ExtentReport.getTest().fail("<video width=\"320\" height=\"240\" controls>\n" +
+                    "  <source src=\"" + videoUrl + "\" type=\"video/mp4\">\n" +
+                    "  Your browser does not support the video tag.\n" +
+                    "</video>");
+        } else {
+            ExtentReport.getTest().fail(base64ImageTag);
+        }
         ExtentReport.getTest().fail(result.getThrowable());
+        Utils.restartApp();
     }
 
 
@@ -53,8 +61,24 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        ExtentReport.getTest().log(Status.PASS, "Test Passed");
-
+        File file = BaseTest.getDriver().getScreenshotAs(OutputType.FILE);
+        String base64Image = "";
+        try {
+            base64Image = Utils.encodeFileToBase64Binary(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "'  style='width:320px'/>";
+        String videoUrl = "/Videos/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
+        if (Objects.equals(conf.read("recordVideo"), "true")) {
+            ExtentReport.getTest().fail("<video width=\"320\" height=\"240\" controls>\n" +
+                    "  <source src=\"" + videoUrl + "\" type=\"video/mp4\">\n" +
+                    "  Your browser does not support the video tag.\n" +
+                    "</video>");
+        } else {
+            ExtentReport.getTest().fail(base64ImageTag);
+        }
+        ExtentReport.getTest().fail(result.getThrowable());
     }
 
 

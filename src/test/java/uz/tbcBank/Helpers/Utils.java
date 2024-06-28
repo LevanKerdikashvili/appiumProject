@@ -8,6 +8,8 @@ import com.aventstack.extentreports.Status;
 import com.google.common.collect.ImmutableMap;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.InteractsWithApps;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
@@ -32,8 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static uz.tbcBank.test.BaseTest.conf;
-import static uz.tbcBank.test.BaseTest.getDriver;
+import static uz.tbcBank.test.BaseTest.*;
 
 public class Utils {
 
@@ -76,6 +77,27 @@ public class Utils {
         fileInputStream.read(bytes);
         return Base64.getEncoder().encodeToString(bytes);
     }
+
+
+    /**
+     * Method to restart the application on both Android and iOS platforms.
+     */
+    public static void restartApp() {
+        try {
+            String platformName = getPlatform();
+            if (platformName.equalsIgnoreCase("android")) {
+                ((AndroidDriver) getDriver()).terminateApp(conf.read("appPackage"));
+                ((AndroidDriver) getDriver()).activateApp(conf.read("appPackage"));
+            } else if (platformName.equalsIgnoreCase("ios")) {
+                ((IOSDriver) getDriver()).terminateApp(conf.read("iOSBundleId"));
+                ((IOSDriver) getDriver()).activateApp(conf.read("iOSBundleId"));
+            }
+            log(Status.INFO, "Application restarted successfully on " + platformName);
+        } catch (Exception e) {
+            log(Status.FAIL, "Failed to restart the application: " + e.getMessage());
+        }
+    }
+
 
     /**
      * The function waits for a web element to become visible on the page.
