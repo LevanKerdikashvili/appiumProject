@@ -54,6 +54,12 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.1.0-alpha1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -63,6 +69,9 @@
                 <version>3.12.1</version>
                 <configuration>
                     <release>17</release>
+                    <compilerArgs>
+                        <arg>-Xlint:-options</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -70,6 +79,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>OFF</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                     <suiteXmlFiles>
                         <suiteXmlFile>${testng}</suiteXmlFile>
                     </suiteXmlFiles>

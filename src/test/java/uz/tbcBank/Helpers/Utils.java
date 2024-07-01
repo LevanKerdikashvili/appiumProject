@@ -40,7 +40,6 @@ public class Utils {
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
     private static final String LOG_FILE_NAME = "app.log";
-
     static Date date = new Date();
 
 
@@ -71,10 +70,15 @@ public class Utils {
 
 
     public static String encodeFileToBase64Binary(File file) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] bytes = new byte[(int) file.length()];
-        fileInputStream.read(bytes);
-        return Base64.getEncoder().encodeToString(bytes);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] bytes = new byte[(int) file.length()];
+            int bytesRead = fileInputStream.read(bytes);
+            if (bytesRead != file.length()) {
+                log(Status.INFO, "Could not read the entire file");
+                throw new IOException("Could not read the entire file");
+            }
+            return Base64.getEncoder().encodeToString(bytes);
+        }
     }
 
 
@@ -199,16 +203,11 @@ public class Utils {
      * @return The method is returning the text value of the WebElement.
      */
     public static String getText(WebElement e, String msg) {
-        String txt = null;
-        switch (BaseTest.getPlatform()) {
-            case "android":
-                txt = getAttribute(e, "text");
-                break;
-            case "ios":
-                txt = getAttribute(e, "label");
-                break;
-        }
-
+        String txt = switch (BaseTest.getPlatform()) {
+            case "android" -> getAttribute(e, "text");
+            case "ios" -> getAttribute(e, "label");
+            default -> null;
+        };
         log(Status.INFO, msg + txt);
         return txt;
     }
@@ -305,7 +304,7 @@ public class Utils {
      */
     public static void swipeActionIos(String direction) {
         log(Status.INFO, "ios swipe - direction is: " + direction);
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("direction", direction);
         getDriver().executeScript("mobile:swipe", params);
     }
@@ -352,7 +351,13 @@ public class Utils {
     }
 
 
-    public static void receiveSMS(String phoneNumber, String message) throws IOException {
+    /**
+     * The function `receiveSMS` simulates receiving an SMS on an Android emulator using an ADB command.
+     *
+     * @param phoneNumber The phone number from which the SMS is being sent.
+     * @param message     The message content of the SMS.
+     */
+    public static void receiveSMSonAndroid(String phoneNumber, String message) throws IOException {
         // Construct the adb command
         String command = String.format("adb emu sms send \"%s\" %s", phoneNumber, message);
 

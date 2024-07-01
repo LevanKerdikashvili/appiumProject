@@ -14,7 +14,6 @@ public class ExtentReport {
     private static final ThreadLocal<ExtentTest> extentTestThreadLocal = new ThreadLocal<>();
     private static ExtentReports extent;
 
-    final static String filePath = "report/index.html";
 
     /**
      * The function returns an instance of the ExtentReports class, creating it if it doesn't already exist.
@@ -23,7 +22,7 @@ public class ExtentReport {
      */
     public synchronized static ExtentReports getReporter() {
         if (extent == null) {
-            ExtentSparkReporter html = new ExtentSparkReporter(filePath);
+            ExtentSparkReporter html = new ExtentSparkReporter("report/index.html");
 
             // CSS style
             String css = ".nav-logo {"

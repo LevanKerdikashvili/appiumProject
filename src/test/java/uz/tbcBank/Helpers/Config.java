@@ -3,12 +3,11 @@
  */
 package uz.tbcBank.Helpers;
 
-
 import java.io.*;
 import java.util.Properties;
 
 public class Config extends Properties {
-    private static Config _instance;
+    private static volatile Config instance;
 
     // The `private Config()` constructor is a private constructor of the `Config` class. It is called when an instance of
     // the `Config` class is created.
@@ -20,20 +19,19 @@ public class Config extends Properties {
      * The load() function loads the properties from a config file named "config.properties".
      */
     private void load() {
-        try {
-            InputStream inputStream = new FileInputStream("config.properties"); // config file location
+        try (InputStream inputStream = new FileInputStream("config.properties")) { // config file location
             load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Consider using a logging framework
         }
     }
 
     /**
-     * use getProperty instead
+     * Retrieves the value associated with the specified key from the properties file.
      *
-     * @return string value of a key
+     * @param key the key whose associated value is to be returned
+     * @return the value associated with the specified key
      */
-
     public String read(String key) {
         return getProperty(key);
     }
@@ -44,13 +42,13 @@ public class Config extends Properties {
      * @return The instance of the Config class.
      */
     public static Config getInstance() {
-        if (_instance == null) {
-            _instance = new Config();
+        if (instance == null) {
+            synchronized (Config.class) {
+                if (instance == null) {
+                    instance = new Config();
+                }
+            }
         }
-
-        return _instance;
+        return instance;
     }
-
 }
-
-

@@ -27,10 +27,10 @@ import static uz.tbcBank.Helpers.Utils.log;
 
 public class BaseTest {
 
-    protected static ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
-    protected static ThreadLocal<HashMap<String, String>> strings = new ThreadLocal<>();
-    protected static ThreadLocal<String> platform = new ThreadLocal<>();
-    protected static ThreadLocal<String> env = new ThreadLocal<>();
+    private static final ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
+    private static final ThreadLocal<HashMap<String, String>> strings = new ThreadLocal<>();
+    private static final ThreadLocal<String> platform = new ThreadLocal<>();
+    private static final ThreadLocal<String> env = new ThreadLocal<>();
 
     public static Config conf = Config.getInstance(); // load config reader
     private static VideoRecordUtils videoRecordUtils;
@@ -41,13 +41,14 @@ public class BaseTest {
     }
 
     public void setDriver(AppiumDriver drv) {
-        log(Status.INFO, "set driver: " + driver);
+        log(Status.INFO, "set driver: " + drv.getCapabilities().getCapability("platformName").toString());
         driver.set(drv);
     }
 
     public static String getPlatform() {
         return platform.get();
     }
+
 
     public void setPlatform(String platformValue) {
         log(Status.INFO, "set platform: " + platformValue);
@@ -138,7 +139,7 @@ public class BaseTest {
     public void tearDown() {
         if (driver != null) {
             log(Status.INFO, "driver quit");
-            log(Status.INFO, "--- --- --- ---");
+            log(Status.INFO, "---*---*---*---");
             getDriver().quit();
         }
     }
