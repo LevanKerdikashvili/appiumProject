@@ -26,7 +26,7 @@ public class Listener implements ITestListener {
             e.printStackTrace();
         }
         String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "'  style='width:320px'/>";
-        String videoUrl = "/Videos/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
+        String videoUrl = "/Videos/" + System.getProperty("platform", conf.read("platform")).toLowerCase() + "/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
         if (Objects.equals(conf.read("recordVideo"), "true")) {
             ExtentReport.getTest().fail("<video width=\"320\" height=\"240\" controls>\n" +
                     "  <source src=\"" + videoUrl + "\" type=\"video/mp4\">\n" +
@@ -69,16 +69,15 @@ public class Listener implements ITestListener {
             e.printStackTrace();
         }
         String base64ImageTag = "<img src='data:image/png;base64, " + base64Image + "'  style='width:320px'/>";
-        String videoUrl = "/Videos/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
+        String videoUrl = "/Videos/" + System.getProperty("platform", conf.read("platform")).toLowerCase() + "/" + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar) + File.separator + result.getTestClass().getRealClass().getSimpleName() + File.separator + result.getName() + ".mp4";
         if (Objects.equals(conf.read("recordVideo"), "true")) {
-            ExtentReport.getTest().fail("<video width=\"320\" height=\"240\" controls>\n" +
+            ExtentReport.getTest().pass("<video width=\"320\" height=\"240\" controls>\n" +
                     "  <source src=\"" + videoUrl + "\" type=\"video/mp4\">\n" +
                     "  Your browser does not support the video tag.\n" +
                     "</video>");
         } else {
-            ExtentReport.getTest().fail(base64ImageTag);
+            ExtentReport.getTest().pass(base64ImageTag);
         }
-        ExtentReport.getTest().fail(result.getThrowable());
     }
 
 

@@ -70,7 +70,6 @@ public class Utils {
     }
 
 
-
     public static String encodeFileToBase64Binary(File file) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] bytes = new byte[(int) file.length()];
@@ -352,5 +351,20 @@ public class Utils {
         return stringMap;
     }
 
+
+    public static void receiveSMS(String phoneNumber, String message) throws IOException {
+        // Construct the adb command
+        String command = String.format("adb emu sms send \"%s\" %s", phoneNumber, message);
+
+        // Execute the command
+        Process process = Runtime.getRuntime().exec(command);
+        log(Status.INFO, "receive SMS command: " + command);
+        try {
+            process.waitFor();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -50,6 +50,8 @@ public class VideoRecordUtils {
                 media = ((IOSDriver) driver).stopRecordingScreen();
             }
             String dir = "videos" + File.separator
+                    + System.getProperty("platform", conf.read("platform")).toLowerCase()
+                    + File.separator
                     + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar)
                     + File.separator
                     + result.getTestClass().getRealClass().getSimpleName();

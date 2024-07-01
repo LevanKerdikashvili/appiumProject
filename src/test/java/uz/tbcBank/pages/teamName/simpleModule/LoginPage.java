@@ -10,6 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import uz.tbcBank.Helpers.Utils;
 import uz.tbcBank.test.BaseTest;
 
+import java.io.IOException;
+
 public class LoginPage {
 
     protected AppiumDriver driver;
@@ -47,7 +49,16 @@ public class LoginPage {
         Utils.sendKeys(passwordTxtFld, password, "password is " + password);
     }
 
-    public void pressLoginBtn() {
+    public void pressLoginBtn() throws IOException {
+
+            String phoneNumber = "TBC BANK";
+            String message = "Hello, this is a test SMS!";
+             try {
+            Utils.receiveSMS("+995598983963", "Your OTP code is 1111");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Utils.click(loginBtn, "press login button");
     }
 
