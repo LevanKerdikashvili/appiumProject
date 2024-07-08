@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-
-<suite name="Suite Title is Here">
+<suite name="simple auth suite">
     <listeners>
         <listener class-name="uz.tbcBank.Helpers.Listener"/>
     </listeners>
     <test name="Story or Category title/description">
+        <parameter name="platform" value="ios"/>
+        <parameter name="env" value="qa"/>
+        <parameter name="udid" value="D07CFFCC-F13F-437D-9A6F-5964BEBBC779"/>
         <classes>
             <class name="uz.tbcBank.test.teamName.simpleModule.LoginTest"/>
+
+        </classes>
+    </test>
+    <test name="Story or Category title/description1">
+        <parameter name="platform" value="android"/>
+        <parameter name="env" value="qa"/>
+        <parameter name="udid" value="emulator-5554"/>
+        <classes>
+            <class name="uz.tbcBank.test.teamName.simpleModule.LoginTest"/>
+            <class name="uz.tbcBank.test.teamName.simpleModule.SimpleTest"/>
         </classes>
     </test>
 </suite>

@@ -8,7 +8,8 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-import uz.tbcBank.test.BaseTest;
+
+import static uz.tbcBank.test.BaseTest.getEnv;
 
 public class ExtentReport {
     private static final ThreadLocal<ExtentTest> extentTestThreadLocal = new ThreadLocal<>();
@@ -30,8 +31,8 @@ public class ExtentReport {
                     + "}";
 
             html.config().setCss(css);
-            html.config().setDocumentTitle(BaseTest.getEnv() + " Mobile Testing Report");
-            html.config().setReportName("Mobile App Testing - " + BaseTest.getPlatform() + " - " + BaseTest.getEnv());
+            html.config().setDocumentTitle("Mobile Testing Report");
+            html.config().setReportName("Mobile App Testing");
             html.config().setTheme(Theme.DARK);
             extent = new ExtentReports();
             extent.attachReporter(html);

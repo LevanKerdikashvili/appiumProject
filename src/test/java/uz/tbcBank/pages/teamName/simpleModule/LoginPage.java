@@ -49,8 +49,10 @@ public class LoginPage {
         Utils.sendKeys(passwordTxtFld, password, "password is " + password);
     }
 
-    public void pressLoginBtn() throws IOException {
+    public void pressLoginBtn() throws IOException, InterruptedException {
         Utils.click(loginBtn, "press login button");
+        Thread.sleep(3000);
+        Utils.scrollToEnd();
     }
 
     public String getErrTxt() {

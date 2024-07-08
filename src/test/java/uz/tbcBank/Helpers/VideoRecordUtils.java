@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
+import static uz.tbcBank.test.BaseTest.getPlatform;
+
 public class VideoRecordUtils {
     private final AppiumDriver driver;
     public static Config conf = Config.getInstance(); // load config reader
@@ -49,8 +51,8 @@ public class VideoRecordUtils {
             } else if (driver instanceof IOSDriver) {
                 media = ((IOSDriver) driver).stopRecordingScreen();
             }
-            String dir = "videos" + File.separator
-                    + System.getProperty("platform", conf.read("platform")).toLowerCase()
+            String dir = "report/videos" + File.separator
+                    + System.getProperty("platform", getPlatform())
                     + File.separator
                     + result.getTestClass().getRealClass().getPackage().getName().replace('.', File.separatorChar)
                     + File.separator

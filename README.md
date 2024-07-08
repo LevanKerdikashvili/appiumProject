@@ -1,246 +1,126 @@
-# appium - test automation (Front - Android/iOS)
+# Appium Test Automation Project
 
------------------------------------------------------------
-## Technology: <br>
-* Automation Framework: Appium <br>
-* Build tool: Maven <br>
-* Bundled Tools: TestNG
-* Language: Java <br>
-* Report: extent <br>
-* Project Structure: Page object Model(POM)<br>
+This project is designed for automated testing of mobile applications on Android and iOS platforms using Appium.
 
+## Project Structure
 
-----------------------------------------------------------
+- **.gitignore:** Specifies intentionally untracked files to ignore.
+- **README.md:** Project documentation.
+- **config.properties:** Configuration file for setting up test parameters.
+- **defaultNG.xml:** TestNG configuration file.
+- **pom.xml:** Maven project file containing project dependencies and build configuration.
+- **src/test/java/uz/tbcBank:**
+    - **Helpers:** Contains helper classes like `Config.java`, `ExtentReport.java`, `Listener.java`, `Utils.java`, `VideoRecordUtils.java`.
+    - **pages:** Contains page classes representing different screens of the application.
+        - **teamName/simpleModule:**
+            - `LoginPage.java`: Represents the login page.
+    - **test:** Contains test classes.
+        - **teamName/simpleModule:**
+            - `LoginTest.java`: Contains tests for the login functionality.
+- **src/test/resources:**
+    - **app:** Contains application files for different environments (dev, qa).
+    - **env:** Contains environment-specific configuration files (dev.xml, qa.xml).
 
-## Prerequisite:
-* Intellij idea (Or use any IDE you like that supports Java language programming)
-* Java 11+
-* npm or other package manager
-* Appium Server (2.x) for installation [check installation instruction](#appium-installation)
-* Appium Inspector (https://github.com/appium/appium-inspector/releases)
-* Android studio Emulator or Real Device  [check installation instruction](#android-studio-setup-emulators--real-device)
-----------------------------------------------------------
+## Technologies and Design Patterns
 
+- **Programming Language:** Java
+- **Build Tool:** Maven
+- **Test Framework:** TestNG
+- **Automation Tool:** Appium
+- **Design Patterns Used:**
+    - **Page Object Model (POM):** Helps in creating an object repository for web elements.
+    - **Singleton Pattern:** Ensures a class has only one instance and provides a global point of access to it.
+    - **Factory Pattern:** Used for creating instances of classes.
 
-## Android Studio Setup (emulators + Real Device)
-<a name="androidStudio"></a>
-Download and install [Android Studio](https://developer.android.com/studio) based on your preferred OS. Then set your ANDROID_HOME by follow this steps:
+## Prerequisites
 
-# Setting ANDROID_HOME Variable
+1. **Java Development Kit (JDK):** Ensure JDK is installed and JAVA_HOME is set.
+2. **Maven:** Ensure Maven is installed and MAVEN_HOME is set.
+3. **Appium:** Install Appium globally using Node.js:
 
-This guide will walk you through setting the `ANDROID_HOME` variable on both Windows and macOS. The `ANDROID_HOME` variable is used by various tools and IDEs for locating the Android SDK installation directory.
+    ```bash
+    npm install -g appium
+    ```
 
-1. Locate your Android SDK installation directory. By default, it's typically installed in `C:\Users\YourUsername\AppData\Local\Android\Sdk`.
+4. **Android SDK:** Ensure Android SDK is installed and ANDROID_HOME is set.
+5. **Xcode (for iOS):** Ensure Xcode is installed and properly configured.
 
-2. Right-click on "This PC" or "My Computer" and select "Properties".
+## Setup
 
-3. Click on "Advanced system settings" on the left side.
+1. **Clone the repository:**
 
-4. In the System Properties window, go to the "Advanced" tab and click on the "Environment Variables" button at the bottom.
+    ```bash
+    git clone https://github.com/LevanKerdikashvili/appiumProject.git
+    cd appiumProject
+    ```
 
-5. In the Environment Variables window, under "System variables", click on "New".
+2. **Install dependencies:**
 
-6. For the Variable Name, enter `ANDROID_HOME`.
+    ```bash
+    mvn install
+    ```
 
-7. For the Variable Value, enter the path to your Android SDK installation directory (e.g., `C:\Users\YourUsername\AppData\Local\Android\Sdk`).
+## Configuration
 
-8. Click "OK" to save the variable.
+Edit the `config.properties` file to set up your test parameters:
 
-9. Click "OK" again to close the Environment Variables window.
+    ```properties
+    appium.server.url=http://localhost:4723/wd/hub
+    android.app.path=src/test/resources/app/dev/androidApp.apk
+    ios.app.path=src/test/resources/app/dev/iosApp.app
+    ```
 
-10. You may need to restart your system for the changes to take effect, although restarting your command prompt or IDE may be sufficient.
+- **appium.server.url:** The URL of the Appium server.
+- **android.app.path:** Path to the Android application file.
+- **ios.app.path:** Path to the iOS application file.
 
- **Setting `ANDROID_HOME` on macOS**
+## Running Tests
 
-1. Open Terminal.
+You can run the tests using the following command:
 
-2. Run the command `nano ~/.bash_profile` to open your bash profile (you can also use `~/.zshrc` if you are using Zsh).
+    ```bash
+    mvn test
+    ```
 
-3. Add the following line at the end of the file: 
+### Running Tests with Parameters
 
-`export ANDROID_HOME=/Users/YourUsername/Library/Android/sdk`
+You can specify parameters such as platform (Android or iOS) when running tests:
 
+    ```bash
+    mvn test -Dplatform=Android
+    ```
 
-Replace `/Users/YourUsername/Library/Android/sdk` with the path to your Android SDK installation directory.
+## Test Reports
 
-4. Save the file by pressing `Ctrl` + `X`, then `Y`, and finally press `Enter`.
+Test reports will be generated in the `test-output` directory of the project.
 
-5. To make the changes take effect, either restart Terminal or run `source ~/.bash_profile` in the terminal.
+## Helper Classes
 
-Remember to replace `YourUsername` with your actual username in the paths specified above.
+- **Config.java:** Contains methods for reading configuration properties.
+- **ExtentReport.java:** Manages test reporting using ExtentReports.
+- **Listener.java:** Implements TestNG listeners for logging and reporting.
+- **Utils.java:** Utility methods for common test tasks.
+- **VideoRecordUtils.java:** Handles video recording of test sessions.
 
-### Connecting a Real Device for Mobile App Testing with Appium
+## Page Classes
 
-### Enable Developer Mode on Your Device:
-1. **For Android**: Go to Settings > About phone > Software info, then tap "Build number" 7 times to enable Developer Options. Once enabled, go to Settings > Developer options and enable USB debugging.
+- **LoginPage.java:** Represents the login page of the application and contains methods for interacting with the login screen.
 
-### Connect Your Device to the Computer:
-- Use a USB cable to connect your device to your computer.
+## Test Classes
 
-### Check Device Connection:
-- Open a terminal or command prompt.
-    - Run `adb devices`. Your device should be listed. (for Android)
-    - Run `xcrun xctrace list devices`. Your device should be listed. (for iOS)
-  
+- **BaseTest.java:** Base class for all test classes. Initializes the Appium driver and manages test setup and teardown.
+- **LoginTest.java:** Contains tests for the login functionality, verifying various login scenarios.
 
+## Contributing
 
-### Additional variables
+To contribute to this project, follow these steps:
 
-For more comfortable, you will also need it during the work process set next variables
-    platform-tools <br>
-    cmdline-tools<br>
-    cmdline-tools/bin <br>
-    emulator </br>
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit them (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a pull request.
 
+## License
 
-### for MAC
-`export PATH=$ANDROID_HOME/platform-tools:$PATH` </br>
-`export PATH=$ANDROID_HOME/cmdline-tools:$PATH` </br>
-`export PATH=$ANDROID_HOME/cmdline-tools/bin:$PATH` </br>
-`export PATH=$ANDROID_HOME/emulator:$PATH` </br>
-
-### for Windows 
-Use the process which is described above about how to set ANDROID_HOME
-
-warning!
-if you use old android studio version, you needs: <br>
-`platform-tools` <br>
-`tools` <br>
-`tools/bin` <br>
-`emulator` </br>
-instead of<br>
-`platform-tools` <br>
-`cmdline-tools` <br>
-`cmdline-tools/bin` <br>
-`emulator` </br>
-
-
-
-----------------------------------------------------------
-## Setup Android Emulator
-Open Android Studio -> More Actions -> Virtual Device Manager -> Create device -> Choose any type of device you want (in this tutorial I use Pixel 4 with Google Play) -> Choose your Android version which we have installed in previous steps (API 33 with Google Play).
-
-<img src="https://miro.medium.com/v2/resize:fit:1200/format:webp/0*7uCXSld03RWzzcuy.gif">
-
-Run your previously created Android emulator.
-
-<img src="https://miro.medium.com/v2/resize:fit:1200/format:webp/0*vQT6IWl7yZtJ8X-c.gif">
-
-
-
-----------------------------------------------------------
-## Appium installation
-<a name="appium"></a>
-Open your terminal or cmd then enter command and wait for installation to finish<br/>
-`npm install -g appium@next` or will be better `npm install -g appium@2.5`
-
-Install Appium 2 driver for Android using terminal<br/>
-`appium driver install uiautomator2`
-
-Check if uiautomator2 driver is installed<br/>
-`appium driver list`
-
-
-Install the plugin using Appium's plugin CLI, either as a named plugin or via NPM:<br/>
-`appium plugin install --source=npm appium-device-farm`
-
-
-`appium plugin install --source=npm appium-dashboard`
-
-The plugin will not be active unless turned on when invoking the Appium server. See "Argument options" below<br/>
-`appium server -ka 800 --use-plugins=device-farm,appium-dashboard  -pa /wd/hub --plugin-device-farm-platform=android`
-<br/> You can define as well device type `"android" , "ios" or "both"`
-
-<img src="https://github.com/AppiumTestDistribution/appium-device-farm/blob/main/docs/assets/images/demo.gif?raw=true" width="500" />
-<br/> you can block/unblock devices from Dashboard manually. These devices will not be picked up for automation.
-Once automation picks the device user cannot manually unblock, it's responsible for the automation script.
-dashboard will be: <a href="http://localhost:4723/device-farm/" target="_blank">localhost:4723/device-farm</a> 
-for more information check <a href="https://appium-device-farm-eight.vercel.app/" target="_blank">Appium Device Farm Doc.</a>
-
-----------------------------------------------------------
-## How to use appium inspector:
-<img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*2kkCMk9fkmouiXNb.png">
-
-**Set Driver Capabilities**
-
-In order for Appium to be able to connect to your device and app, you need to fill in some information about your testing environment such as device and application information.
-Find your Android emulator UDID by using terminal and enter this command:
-
-`adb devices` // but if you use device-farm you don't need device UDID
-
-Copy this JSON capabilities into your Appium Inspector (for ANDROID)
-
-{
-"platformName": "Android",<br>
-"appium:udid": "yourudid", // if you need this<br>
-"appium:appPackage": "com.google.android.youtube",<br>
-"appium:appActivity": "com.google.android.youtube.app.honeycomb.Shell$HomeActivity",<br>
-"appium:deviceName": "yourdevicename",<br>
-"appium:automationName": "UiAutomator2",<br> 
-"appium:autoGrantPermissions": true<br>
-}
-
-
-Copy this JSON capabilities into your Appium Inspector (for IOS)
-
-{
-"appium:platformName": "ios",<br>
-"appium:automationName": "XCUITest",<br>
-"appium:udid": "ios device udid",<br>
-"appium:forceEspressoRebuild": true,<br>
-"appium:printPageSourceOnFindFailure": true,<br>
-"appium:printPageSourceOnFindFailure": true<br>
-"appium:bundleId": "ios app bundle id"<br>
-}
-
-<img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*sYAx27RpKj5ciL4w.png">
-
-Replace “yourudid” in “appium:udid” with your UDID which you found in this previous step. <br>
-Replace “yourdevicename” in “appium:deviceName” with you Android emulator name. You can find information about your device name in Android Studio -> Device Manager.
-
-<img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*L83WiM9i6uulT7iN.png">
-
-Pixel 4 API 33 is the name of my emulator device.<br>
-Actually there are 2 ways to set which application you will automate:<br/>
-By using capability of “appium:app”, with this your apk is not pre-installed on your device and will be installed each time your test run. If you are using this type of capability then you don’t need to use “appium:appPackage” and “appium:appActivity” as we used in the previous steps.
-
-<img src="https://miro.medium.com/v2/resize:fit:1200/format:webp/0*W7_CfzJbX4TxW_X8.gif">
-
-
-----------------------------------------------------------
-## Run the Automation Script:
-1. Prepare Emulator or real device
-2. Run Appium server
-3. check config.properties before execute
-4. Run the testng/*.xml file(s) or use mvn command `mvn clean test -Dplatform=android or ios -Denv=dev or qa`.
-5. After Complete the test execution Report will generate to "report" Folder if it will be enabled from config
-
-
-----------------------------------------------------------
-
-## Folder Structure
-
-- `src/`: Contains the source code of the project.
-    - `java/`: Contains the Java source files.
-         - `uz.tbcBank`: main package
-           - `Helpers`: classes of Helpers
-                - `ExtendReport`: The ExtentReport class is a helper class that provides methods for creating and managing ExtentReports objects for generating test reports
-                - `Config`: The Config class loads a configuration file and provides a way to read its properties, with a singleton pattern
-                  implementation
-                - `Listener`: It implements the ITestListener interface and overrides all of its methods
-                - `Utils`: The Utils class contains various utility methods
-           - `Page/{teamName}/{moduleName}`: Java class that contains locators and methods (Page Object)
-           - `test/`: Contains the test source code files.
-             - `test/{teamName}/{moduleName}`: Java class that contains test cases as methods and BaseTest.java
-             - `BaseTest` : The BaseTest class in Java sets up and initializes the driver with desired capabilities for Android and iOS platforms
-           - `resources/app/{env}/app.apk`: .apk file for testing
-           - `resources/{env}.xml`: xml files which contains constants/strings depending on the environment
-
-- `pom.xml`: Maven configuration file for your project.
-- `target/`: Contains compiled classes and packaged artifacts (created after building the project).
-- `README.md`: This README file providing an overview of the project.
-- `config.properties`: common config data.
-- `report`: contains reporting files index.html (you can open it in any browser) + screenshots
-- `app.log`: contains logs
-- `testng/*.xml`: testng files
-
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

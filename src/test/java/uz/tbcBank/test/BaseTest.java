@@ -1,7 +1,3 @@
-/**
- * The BaseTest class in Java sets up and initializes the driver with desired capabilities for Android and iOS platforms,
- * and includes methods for setting and getting driver, platform, and environment values.
- */
 package uz.tbcBank.test;
 
 import com.aventstack.extentreports.Status;
@@ -10,98 +6,110 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 import uz.tbcBank.Helpers.Config;
 import uz.tbcBank.Helpers.Utils;
 import uz.tbcBank.Helpers.VideoRecordUtils;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Objects;
 
+import static uz.tbcBank.Helpers.Utils.closeApp;
 import static uz.tbcBank.Helpers.Utils.log;
-
 
 public class BaseTest {
 
     private static final ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
-    private static final ThreadLocal<HashMap<String, String>> strings = new ThreadLocal<>();
     private static final ThreadLocal<String> platform = new ThreadLocal<>();
     private static final ThreadLocal<String> env = new ThreadLocal<>();
 
     public static Config conf = Config.getInstance(); // load config reader
     private static VideoRecordUtils videoRecordUtils;
 
-
+    /**
+     * Gets the current Appium driver instance.
+     *
+     * @return the Appium driver
+     */
     public static AppiumDriver getDriver() {
         return driver.get();
     }
 
+    /**
+     * Sets the Appium driver instance.
+     *
+     * @param drv the Appium driver to set
+     */
     public void setDriver(AppiumDriver drv) {
-        log(Status.INFO, "set driver: " + drv.getCapabilities().getCapability("platformName").toString());
+        System.out.println("set driver: " + drv.getCapabilities().getCapability("platformName").toString());
         driver.set(drv);
     }
 
+    /**
+     * Gets the platform name (android or ios).
+     *
+     * @return the platform name
+     */
     public static String getPlatform() {
-        return platform.get();
-    }
-
-
-    public void setPlatform(String platformValue) {
-        log(Status.INFO, "set platform: " + platformValue);
-        platform.set(platformValue);
-    }
-
-
-    public void setEnv(String envValue) {
-        log(Status.INFO, "set env: " + envValue);
-        env.set(envValue);
-    }
-
-    public static String getEnv() {
-        return env.get();
-    }
-
-    public HashMap<String, String> getStrings() {
-        return strings.get();
-    }
-
-    public void setStrings(HashMap<String, String> str) {
-        strings.set(str);
+        return platform.get().toLowerCase();
     }
 
     /**
-     * The setUp() function sets up the desired capabilities for an Android driver and initializes the driver with the
-     * specified capabilities.
+     * Sets the platform name.
+     *
+     * @param platformValue the platform name to set
      */
+    public void setPlatform(String platformValue) {
+        System.out.println("set platform: " + platformValue);
+        platform.set(platformValue);
+    }
+
+    /**
+     * Sets the environment name.
+     *
+     * @param envValue the environment name to set
+     */
+    public void setEnv(String envValue) {
+        System.out.println("set env: " + envValue);
+        env.set(envValue);
+    }
+
+    /**
+     * Gets the environment name.
+     *
+     * @return the environment name
+     */
+    public static String getEnv() {
+        return env.get().toLowerCase();
+    }
+
+    /**
+     * Sets up the Appium driver with desired capabilities.
+     *
+     * @param platformParam the platform parameter from TestNG XML
+     * @param envParam      the environment parameter from TestNG XML
+     * @param udid          the udid parameter from TestNG XML
+     * @throws Exception if the platform is invalid or driver initialization fails
+     */
+    @Parameters({"platform", "env", "udid"})
     @BeforeClass
-    public void setUp() throws Exception {
+    public void setUp(@Optional String platformParam, @Optional String envParam, @Optional String udid) throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         String projectPath = System.getProperty("user.dir");
-        String platformName = System.getProperty("platform", conf.read("platform")).toLowerCase();
-        String envName = System.getProperty("env", conf.read("env")).toLowerCase();
+        String platformName = (platformParam != null) ? platformParam.toLowerCase() : conf.read("platform").toLowerCase();
+        String envName = (envParam != null) ? envParam.toLowerCase() : conf.read("env").toLowerCase();
 
         setEnv(envName);
-
         setPlatform(platformName);
 
         AppiumDriver driver;
-
-        setStrings(Utils.parseStringXML(getClass().getClassLoader().getResourceAsStream("env/" + getEnv() + ".xml")));
-
+        Utils.setStrings(Utils.parseStringXML(getClass().getClassLoader().getResourceAsStream("env/" + getEnv() + ".xml")));
 
         try {
             switch (platformName) {
                 case "android":
-                    // Set Android-specific capabilities
                     capabilities.setCapability("appium:automationName", conf.read("androidAutomationName"));
                     capabilities.setCapability("appium:platformName", platformName);
-                    if (!Objects.equals(conf.read("randomDevice"), "true")) {
-                        capabilities.setCapability("appium:udid", conf.read("androidUdid"));
-                    }
+                    capabilities.setCapability("appium:udid", (udid != null) ? udid : conf.read("androidUdid"));
                     capabilities.setCapability("appium:appPackage", conf.read("appPackage"));
                     capabilities.setCapability("appium:appActivity", conf.read("appActivity"));
                     capabilities.setCapability("appium:autoGrantPermissions", true);
@@ -109,12 +117,9 @@ public class BaseTest {
                     driver = new AndroidDriver(new URL(conf.read("appiumURL")), capabilities);
                     break;
                 case "ios":
-                    // Set ios-specific capabilities
                     capabilities.setCapability("appium:automationName", conf.read("iOSAutomationName"));
                     capabilities.setCapability("appium:platformName", platformName);
-                    if (!Objects.equals(conf.read("randomDevice"), "true")) {
-                        capabilities.setCapability("appium:udid", conf.read("iosUdid"));
-                    }
+                    capabilities.setCapability("appium:udid", (udid != null) ? udid : conf.read("iosUdid"));
                     capabilities.setCapability("appium:forceEspressoRebuild", true);
                     capabilities.setCapability("appium:printPageSourceOnFindFailure", true);
                     capabilities.setCapability("appium:bundleId", conf.read("iOSBundleId"));
@@ -131,21 +136,18 @@ public class BaseTest {
         }
     }
 
-
     /**
-     * The above function is a teardown method in Java that quits the driver if it is not null.
+     * Closes the Appium driver after the test class execution.
      */
     @AfterClass
     public void tearDown() {
-        if (driver != null) {
-            log(Status.INFO, "driver quit");
-            log(Status.INFO, "---*---*---*---");
-            getDriver().quit();
-        }
+        closeApp();
+        getDriver().quit();
+        System.out.println("driver quit");
     }
 
     /**
-     * The above function is a setup method that initializes a VideoRecordUtils object and starts recording a video.
+     * Starts video recording before each test method.
      */
     @BeforeMethod
     public void beforeMethod() {
@@ -154,17 +156,13 @@ public class BaseTest {
     }
 
     /**
-     * The above function is an AfterMethod annotation in Java that stops video recording using the VideoRecordUtils class
-     * after each test method.
+     * Stops video recording after each test method.
      *
-     * @param result The "result" parameter is an object of type ITestResult, which represents the result of a test method
-     *               execution. It contains information about the test method, such as its name, status (passed, failed, skipped), and
-     *               any associated exception or error.
+     * @param result the test result
      */
     @AfterMethod
     public void afterMethod(ITestResult result) {
         videoRecordUtils = new VideoRecordUtils(getDriver());
         videoRecordUtils.stopRecording(result);
     }
-
 }

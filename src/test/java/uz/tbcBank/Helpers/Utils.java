@@ -40,8 +40,27 @@ public class Utils {
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
     private static final String LOG_FILE_NAME = "app.log";
+    private static final ThreadLocal<HashMap<String, String>> strings = new ThreadLocal<>();
     static Date date = new Date();
 
+
+    /**
+     * Retrieves the strings HashMap for the current thread.
+     *
+     * @return The strings HashMap.
+     */
+    public static HashMap<String, String> getStrings() {
+        return strings.get();
+    }
+
+    /**
+     * Sets the strings HashMap for the current thread.
+     *
+     * @param str The strings HashMap to be set.
+     */
+    public static void setStrings(HashMap<String, String> str) {
+        strings.set(str);
+    }
 
     /**
      * The log function logs a message to the ExtentReport, console, and a log file with the current date and time.
@@ -69,14 +88,29 @@ public class Utils {
     }
 
 
+    /**
+     * Encodes the given file to a Base64 encoded string.
+     *
+     * @param file the file to be encoded
+     * @return the Base64 encoded string representation of the file
+     */
     public static String encodeFileToBase64Binary(File file) throws IOException {
+        // Using try-with-resources to ensure FileInputStream is closed after use
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            // Create a byte array to hold the file data
             byte[] bytes = new byte[(int) file.length()];
+
+            // Read the file data into the byte array
             int bytesRead = fileInputStream.read(bytes);
+
+            // Check if the entire file was read
             if (bytesRead != file.length()) {
+                // Log an info message and throw an exception if the entire file could not be read
                 log(Status.INFO, "Could not read the entire file");
                 throw new IOException("Could not read the entire file");
             }
+
+            // Encode the byte array to a Base64 encoded string and return it
             return Base64.getEncoder().encodeToString(bytes);
         }
     }
@@ -122,6 +156,7 @@ public class Utils {
     public static void clear(WebElement e) {
         waitForVisibility(e);
         e.clear();
+        log(Status.INFO, "clear element: " + e);
     }
 
     /**
@@ -132,6 +167,7 @@ public class Utils {
     public static void click(WebElement e) {
         waitForVisibility(e);
         e.click();
+        log(Status.INFO, "click to element: " + e);
     }
 
     /**
@@ -145,8 +181,8 @@ public class Utils {
      */
     public static void click(WebElement e, String msg) {
         waitForVisibility(e);
-        log(Status.INFO, msg);
         e.click();
+        log(Status.INFO, msg);
     }
 
     /**
@@ -159,7 +195,7 @@ public class Utils {
     public static void sendKeys(WebElement e, String txt) {
         waitForVisibility(e);
         e.sendKeys(txt);
-        log(Status.INFO, "text is: " + txt);
+        log(Status.INFO, "Send key with text: " + txt);
     }
 
     /**
@@ -173,8 +209,8 @@ public class Utils {
      */
     public static void sendKeys(WebElement e, String txt, String msg) {
         waitForVisibility(e);
-        log(Status.INFO, msg);
         e.sendKeys(txt);
+        log(Status.INFO, msg);
     }
 
 
@@ -189,7 +225,27 @@ public class Utils {
      */
     public static String getAttribute(WebElement e, String attribute) {
         waitForVisibility(e);
+        log(Status.INFO, "try to get attribute [" + attribute + "] from element [" + e + " ]");
         return e.getAttribute(attribute);
+
+    }
+
+    /**
+     * The function getText retrieves the text from a WebElement, logs an informational message with the text, and returns
+     * the text.
+     *
+     * @param e The parameter "e" is a WebElement, which represents an element on a web page. It can be any HTML element
+     *          such as a button, input field, or paragraph.
+     * @return The method is returning the text value of the WebElement.
+     */
+    public static String getText(WebElement e) {
+        String txt = switch (BaseTest.getPlatform()) {
+            case "android" -> getAttribute(e, "text");
+            case "ios" -> getAttribute(e, "label");
+            default -> null;
+        };
+        log(Status.INFO, "try to get text from element [" + e + " ]");
+        return txt;
     }
 
     /**
@@ -218,7 +274,6 @@ public class Utils {
      * `BaseTest`.
      */
     public void launchApp() {
-        log(Status.INFO, "launch App");
         switch (BaseTest.getPlatform()) {
             case "android":
                 ((InteractsWithApps) getDriver()).activateApp(conf.read("appPackage"));
@@ -226,41 +281,97 @@ public class Utils {
             case "ios":
                 ((InteractsWithApps) getDriver()).activateApp(conf.read("iOSBundleId"));
         }
+        log(Status.INFO, "launch App where appPackage is [" + conf.read("appPackage") + "] and platform is [" + BaseTest.getPlatform() + "]");
     }
 
     /**
      * The `closeApp` function terminates the currently running mobile application based on the platform (Android or iOS)
      * specified in the test configuration.
      */
-    public void closeApp() {
-        log(Status.INFO, "close app");
-        switch (BaseTest.getPlatform()) {
+    public static void closeApp() {
+        String platform = BaseTest.getPlatform();
+        String appPackage = conf.read("appPackage");
+        log(Status.INFO, "Attempting to close app on platform [" + platform + "] with appPackage [" + appPackage + "]");
+
+        switch (platform) {
             case "android":
-                ((InteractsWithApps) getDriver()).terminateApp(conf.read("appPackage"));
+                try {
+                    ((InteractsWithApps) getDriver()).terminateApp(appPackage);
+                    log(Status.INFO, "Successfully terminated app with appPackage [" + appPackage + "]");
+                } catch (Exception e) {
+                    log(Status.FAIL, "Failed to terminate app on Android. Error: " + e.getMessage());
+                }
                 break;
             case "ios":
-                ((InteractsWithApps) getDriver()).terminateApp(conf.read("iOSBundleId"));
+                try {
+                    ((InteractsWithApps) getDriver()).terminateApp(conf.read("iOSBundleId"));
+                    log(Status.INFO, "Successfully terminated app with iOSBundleId [" + conf.read("iOSBundleId") + "]");
+                } catch (Exception e) {
+                    log(Status.FAIL, "Failed to terminate app on iOS. Error: " + e.getMessage());
+                }
+                break;
+            default:
+                log(Status.FAIL, "Unsupported platform [" + platform + "]");
         }
     }
 
 
     /**
-     * The function `scrollToEndAndroid` scrolls to the end of a page on an Android device using a scroll gesture until it
+     * The function `scrollToEnd` scrolls to the end of a page  using a scroll gesture until it
      * can no longer scroll further.
      */
-    public static void scrollToEndAndroid() {
-        log(Status.INFO, "Android scrollToEnd");
-        boolean canScrollMore;
-        do {
-            canScrollMore = (Boolean) getDriver().executeScript("mobile: scrollGesture", ImmutableMap.of(
-                    "left", 100, "top", 100, "width", 200, "height", 200,
-                    "direction", "down",
-                    "percent", 3.0,
-                    "speed", 1000
+    public static void scrollToEnd() {
+        log(Status.INFO, "Scroll to end on platform: " + BaseTest.getPlatform());
 
-            ));
+        int screenHeight = getDriver().manage().window().getSize().getHeight();
+        int screenWidth = getDriver().manage().window().getSize().getWidth();
+
+        boolean canScrollMore;
+
+        do {
+            try {
+                if (BaseTest.getPlatform().equalsIgnoreCase("android")) {
+                    // get screenSize for android
+                    int scrollStartX = screenWidth / 2;
+                    int scrollStartY = (int) (screenHeight * 0.1);
+                    int scrollEndY = (int) (screenHeight * 0.2);
+
+                    // android
+                    Object result = getDriver().executeScript("mobile: scrollGesture", ImmutableMap.of(
+                            "left", scrollStartX,
+                            "top", scrollStartY,
+                            "width", scrollStartX,
+                            "height", scrollEndY,
+                            "direction", "down",
+                            "percent", 3.0,
+                            "speed", 2000
+                    ));
+                    canScrollMore = result != null && (Boolean) result;
+                } else if (BaseTest.getPlatform().equalsIgnoreCase("ios")) {
+                    // get screen size for IOS
+                    int scrollStartX = screenWidth / 2;
+                    int scrollStartY = (int) (screenHeight * 0.8);
+                    int scrollEndY = (int) (screenHeight * 0.2);
+
+                    // ios
+                    Object result = getDriver().executeScript("mobile: scroll", ImmutableMap.of(
+                            "direction", "down",
+                            "left", scrollStartX,
+                            "top", scrollStartY,
+                            "width", screenWidth,
+                            "height", screenHeight
+                    ));
+                    canScrollMore = result != null && (Boolean) result;
+                } else {
+                    throw new UnsupportedOperationException("Unsupported platform: " + BaseTest.getPlatform());
+                }
+            } catch (Exception e) {
+                log(Status.FAIL, "Scroll attempt failed. Error: " + e.getMessage());
+                canScrollMore = false;
+            }
         } while (canScrollMore);
     }
+
 
     /**
      * The function `scrollToTextAndroid` scrolls to a specific text element on an Android app using Appium.
@@ -272,41 +383,6 @@ public class Utils {
     public static void scrollToTextAndroid(String text) {
         log(Status.INFO, "android scrollToText - text is: " + text);
         getDriver().findElement(AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\"" + text + "\"));"));
-    }
-
-
-    /**
-     * The `swipeActionAndroid` function uses JavaScript to perform a swipe gesture on a specified WebElement in a given
-     * direction with a 75% swipe distance.
-     *
-     * @param ele       The `ele` parameter in the `swipeActionAndroid` method is the element on which you want to perform the
-     *                  swipe action. It is of type `WebElement` and represents the element on the Android app screen that you want to
-     *                  swipe.
-     * @param direction The `direction` parameter in the `swipeActionAndroid` method specifies the direction in which the
-     *                  swipe gesture should be performed. It could be values like "up", "down", "left", or "right" based on the desired
-     *                  swipe direction on the Android device.
-     */
-    public static void swipeActionAndroid(WebElement ele, String direction) {
-        log(Status.INFO, "android swipe - direction is: '" + direction + "' and element is " + ele);
-        ((JavascriptExecutor) getDriver()).executeScript("mobile: swipeGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) ele).getId(),
-                "direction", direction,
-                "percent", 0.75
-        ));
-    }
-
-    /**
-     * The function `swipeActionIos` takes a direction as input and performs a swipe action on an iOS device using Appium.
-     *
-     * @param direction The `direction` parameter in the `swipeActionIos` method specifies the direction in which the swipe
-     *                  action should be performed. It could be values like "up", "down", "left", or "right" indicating the direction of the
-     *                  swipe gesture on an iOS device.
-     */
-    public static void swipeActionIos(String direction) {
-        log(Status.INFO, "ios swipe - direction is: " + direction);
-        Map<String, Object> params = new HashMap<>();
-        params.put("direction", direction);
-        getDriver().executeScript("mobile:swipe", params);
     }
 
 
