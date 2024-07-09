@@ -120,10 +120,10 @@ public class BaseTest {
                     capabilities.setCapability("appium:automationName", conf.read("iOSAutomationName"));
                     capabilities.setCapability("appium:platformName", platformName);
                     capabilities.setCapability("appium:udid", (udid != null) ? udid : conf.read("iosUdid"));
-                    capabilities.setCapability("appium:forceEspressoRebuild", true);
                     capabilities.setCapability("appium:printPageSourceOnFindFailure", true);
                     capabilities.setCapability("appium:bundleId", conf.read("iOSBundleId"));
                     capabilities.setCapability("appium:app", projectPath + "/src/test/resources/app/" + getEnv() + "/" + conf.read("iosApp"));
+                    capabilities.setCapability("autoAcceptAlerts", true);
                     driver = new IOSDriver(new URL(conf.read("appiumURL")), capabilities);
                     break;
                 default:

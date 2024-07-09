@@ -12,25 +12,12 @@ public class LoginTest extends BaseTest {
 
 
     @Test
-    public void invalidUserName() throws IOException, InterruptedException {
+    public void successLogin() throws InterruptedException {
         LoginPage loginPage = new LoginPage(getDriver());
-        loginPage.enterUserName("invalidusername");
-        loginPage.enterPassword("secret_sauce");
         loginPage.pressLoginBtn();
-        String actualErrTxt = loginPage.getErrTxt();
-        Assert.assertEquals(actualErrTxt, "1Username and password do not match any user in this service.");
-    }
-
-    @Test
-    public void successLogin() throws InterruptedException, IOException {
-        LoginPage loginPage = new LoginPage(getDriver());
-        loginPage.enterUserName("standard_user");
-        loginPage.enterPassword("secret_sauce");
-        String expectedProductTitle = Utils.getStrings().get("product_title");
-        System.out.println(expectedProductTitle);
-        loginPage.pressLoginBtn();
+        loginPage.enterUserName(Utils.getStrings().get("phone_number"));
+        loginPage.enterPassword(Utils.getStrings().get("password"));
         Thread.sleep(5000);
     }
-
 
 }

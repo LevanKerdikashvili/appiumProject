@@ -21,22 +21,17 @@ public class LoginPage {
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
-    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Username\"]")
-    @iOSXCUITFindBy(id = "test-Username")
+    @AndroidFindBy(id = "etInputField")
+    @iOSXCUITFindBy(id = "user_phone_number_textField")
     private WebElement usernameTxtFld;
 
-    @AndroidFindBy(xpath = "//android.widget.EditText[@content-desc=\"test-Password\"]")
-    @iOSXCUITFindBy(id = "test-Password")
+    @AndroidFindBy(id = "pinEntryEditText")
+    @iOSXCUITFindBy(id = "○○○○")
     private WebElement passwordTxtFld;
 
-    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-LOGIN\"]")
-    @iOSXCUITFindBy(id = "test-LOGIN")
+    @AndroidFindBy(id = "introStartButton")
+    @iOSXCUITFindBy(xpath = "//XCUIElementTypeStaticText[@name=\"Log in\"]")
     private WebElement loginBtn;
-    @AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"test-Error message\"]/android.widget.TextView")
-    @iOSXCUITFindBy(id = "test-Error message")
-    private WebElement errTxt;
-    @AndroidFindBy(xpath = "//android.widget.TextView[@text='PRODUCTS1']")
-    private WebElement productTitleTxt;
 
 
     public void enterUserName(String username) {
@@ -49,19 +44,10 @@ public class LoginPage {
         Utils.sendKeys(passwordTxtFld, password, "password is " + password);
     }
 
-    public void pressLoginBtn() throws IOException, InterruptedException {
+    public void pressLoginBtn() {
         Utils.click(loginBtn, "press login button");
-        Thread.sleep(3000);
-        Utils.scrollToEnd();
     }
 
-    public String getErrTxt() {
-        return Utils.getText(errTxt, "error text is - ");
-    }
-
-    public String getTitle() {
-        return Utils.getText(productTitleTxt, "product page title is - ");
-    }
 
 }
 
